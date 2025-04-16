@@ -6,6 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input';
 import { useState } from 'react';
 import { cache } from 'react';
+import { Popcorn } from 'lucide-react';
 
 async function getAnimeImage(title: string): Promise<string | null> {
   try {
@@ -46,8 +47,13 @@ export default async function Home() {
 
   return (
     <div className="container mx-auto py-10">
+      {/* Logo Section */}
+      <div className="flex items-center justify-center mb-4">
+        <Popcorn className="text-teal-500 mr-2" size={48} />
+        <h1 className="text-2xl font-bold">AniRec</h1>
+      </div>
+
       <div className="mb-8">
-        <h1 className="text-2xl font-bold mb-4">AniRec - Get Anime Recommendations</h1>
         <div className="flex gap-4">
           <Input
             type="text"
@@ -89,5 +95,3 @@ export default async function Home() {
     </div>
   );
 }
-
-
