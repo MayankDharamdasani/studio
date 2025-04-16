@@ -1,7 +1,9 @@
+'use client';
 
 import type {Metadata} from 'next';
 import {Geist, Geist_Mono} from 'next/font/google';
 import './globals.css';
+import {useEffect, useState} from 'react';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -13,18 +15,27 @@ const geistMono = Geist_Mono({
   subsets: ['latin'],
 });
 
-export const metadata: Metadata = {
-  title: 'AniRec - Get Anime Recommendations',
-  description: 'AI Powered Anime Recommendations',
-};
-
 export default function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => {
+    setMounted(true);
+  }, []);
+
+  if (!mounted) {
+    return <></>;
+  }
+
   return (
     <html lang="en">
+      <head>
+        <title>AniRec - Get Anime Recommendations</title>
+        <meta name="description" content="AI Powered Anime Recommendations" />
+      </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
         {children}
       </body>

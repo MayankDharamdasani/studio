@@ -1,23 +1,37 @@
-'use client'
+'use client';
 
 import { generateAnimeRecommendations, GenerateAnimeRecommendationsOutput } from '@/ai/flows/generate-anime-recommendations';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { useState } from 'react';
+import { cache } from 'react';
 
-// Placeholder function to fetch anime image URLs (replace with actual implementation)
-const getAnimeImage = (title: string) => {
-  // Replace with actual logic to fetch image from MyAnimeList or another source
-  return `https://picsum.photos/200/300?random=${title}`; // Placeholder image URL
-};
+async function getAnimeImage(title: string): Promise<string | null> {
+  try {
+    const response = await fetch(
+      `https://www.googleapis.com/customsearch/v1?key=${process.env.GOOGLE_SEARCH_API_KEY}&cx=${process.env.GOOGLE_SEARCH_ENGINE_ID}&q=${encodeURIComponent(title + " anime poster")}&searchType=image&imgSize=medium`
+    );
+
+    const data = await response.json();
+
+    if (data.items && data.items.length > 0) {
+      return data.items[0].link; // Return the link of the first image
+    } else {
+      return null;
+    }
+  } catch (error) {
+    console.error("Error fetching image:", error);
+    return null;
+  }
+}
 
 const getRandomColor = () => {
   const colors = ['bg-red-100', 'bg-blue-100', 'bg-green-100', 'bg-yellow-100', 'bg-purple-100', 'bg-pink-100'];
   return colors[Math.floor(Math.random() * colors.length)];
 };
 
-export default function Home() {
+export default async function Home() {
   const [preferences, setPreferences] = useState('');
   const [recommendations, setRecommendations] = useState<GenerateAnimeRecommendationsOutput>([]);
   const [loading, setLoading] = useState(false);
@@ -55,7 +69,7 @@ export default function Home() {
             </CardHeader>
             <CardContent>
               <img
-                src={getAnimeImage(anime.title)}
+                src={await getAnimeImage(anime.title) || "https://via.placeholder.com/200x300"}
                 alt={anime.title}
                 className="mb-4 rounded-md"
               />
@@ -75,3 +89,5 @@ export default function Home() {
     </div>
   );
 }
+
+
